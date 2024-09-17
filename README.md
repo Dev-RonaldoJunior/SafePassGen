@@ -1,6 +1,9 @@
+
+---
+
 # Gerador de Senhas em Python
 
-Este é um projeto simples de um **Gerador de Senhas** desenvolvido em Python. Ele permite gerar senhas com opções personalizáveis de tamanho (mínimo de 4 e máximo de 20 caracteres) e escolha de inclusão de letras maiúsculas, letras minúsculas, números e símbolos. O programa possui tratamento de erros e permite continuar gerando novas senhas sem precisar reiniciar o programa.
+Este é um projeto simples de um **Gerador de Senhas** desenvolvido em Python. Ele permite gerar senhas com opções personalizáveis de tamanho (mínimo de 4 e máximo de 20 caracteres) e escolha de inclusão de letras maiúsculas, letras minúsculas, números e símbolos. O programa possui tratamento de erros, armazenamento seguro das senhas geradas e permite continuar gerando novas senhas sem precisar reiniciar o programa.
 
 ## Funcionalidades
 
@@ -10,6 +13,8 @@ Este é um projeto simples de um **Gerador de Senhas** desenvolvido em Python. E
   - Letras maiúsculas
   - Números
   - Símbolos
+- Armazenamento seguro das senhas geradas usando criptografia.
+- Leitura das senhas armazenadas com exibição numerada.
 - Tratamento de erros para entradas inválidas, como:
   - Inserção de valores não numéricos no tamanho da senha.
   - Tamanho de senha fora do intervalo permitido (4 a 20 caracteres).
@@ -20,31 +25,57 @@ Este é um projeto simples de um **Gerador de Senhas** desenvolvido em Python. E
 ## Requisitos
 
 - Python 3.x
+- Biblioteca `cryptography` para criptografia e descriptografia
 
 ## Como usar
 
 1. **Clone o repositório ou baixe o arquivo:**
    ```bash
-   git clone https://github.com/usuario/gerador-de-senhas.git
+   git clone https://github.com/usuario/SafePassGen.git
    ```
 
 2. **Navegue até o diretório do projeto:**
    ```bash
-   cd gerador-de-senhas
+   cd SafePassGen
    ```
 
-3. **Execute o script:**
+3. **Instale as dependências:**
    ```bash
-   python gerador_senhas.py
+   pip install -r requirements.txt
    ```
 
-4. **Interaja com o programa:**
-   - Escolha o tamanho da senha entre 4 e 20 caracteres.
-   - Escolha se deseja incluir letras minúsculas, letras maiúsculas, números e símbolos.
-   - Receba sua senha gerada com base nas suas preferências.
-   - Opção de gerar uma nova senha ou finalizar o programa.
+4. **Execute o script para gerar senhas:**
+   ```bash
+   python scripts/gerador_senhas.py
+   ```
+
+5. **Execute o script para ler as senhas armazenadas:**
+   ```bash
+   python scripts/leitor_senhas.py
+   ```
+
+6. **Interaja com o programa:**
+   - No `gerador_senhas.py`:
+     - Escolha o tamanho da senha entre 4 e 20 caracteres.
+     - Escolha se deseja incluir letras minúsculas, letras maiúsculas, números e símbolos.
+     - Receba sua senha gerada com base nas suas preferências.
+     - Opção de gerar uma nova senha ou finalizar o programa.
+   - No `leitor_senhas.py`:
+     - Veja as senhas armazenadas com uma numeração clara.
+     
+---
 
 ## Exemplo de Execução
+
+### Gerador de Senhas:
+
+- Ao executar o programa `gerador_senhas.py` pela primeira vez, dois arquivos serão criados:
+  - **`chave.key`:** Contém a chave de criptografia gerada automaticamente. Esta chave é essencial para descriptografar as senhas armazenadas.
+  - **`senhas.txt`:** Armazena as senhas geradas, criptografadas para garantir sua segurança.
+  
+- O usuário pode escolher o tamanho da senha (entre 4 e 20 caracteres) e quais tipos de caracteres incluir (letras minúsculas, maiúsculas, números e símbolos).
+
+Exemplo de execução:
 
 ```bash
 Mínimo de tamanho = 4, Máximo de tamanho = 20
@@ -57,6 +88,21 @@ Sua senha gerada é: Abc123de
 Deseja gerar outra senha? (s/n): s
 ```
 
+### Leitor de Senhas:
+
+- O programa `leitor_senhas.py` lê e descriptografa as senhas armazenadas no arquivo `senhas.txt`, exibindo-as de forma legível para o usuário. 
+
+Exemplo de execução:
+
+```bash
+Senha 1: Abc123de
+Senha 2: FgH456ij
+```
+
+---
+
+Esse novo texto dá mais contexto e explica de forma clara como os arquivos funcionam e como o usuário deve interagir com o programa.
+
 ## Tratamento de Erros
 
 O programa lida com vários tipos de erros para garantir que o usuário insira valores corretos:
@@ -68,10 +114,20 @@ O programa lida com vários tipos de erros para garantir que o usuário insira v
 ## Estrutura do Projeto
 
 ```
-SAFEPASSGEN/
+SafePassGen/
 │
-├── gerador_senhas.py  # Script principal do gerador de senhas
-├── README.md          # Arquivo de documentação do projeto
+├── dados/
+│   ├── chave.key         # Chave de criptografia
+│   └── senhas.txt        # Arquivo de senhas criptografadas
+│
+├── scripts/
+│   ├── gerador_senhas.py  # Script principal do gerador de senhas
+│   └── leitor_senhas.py   # Script para leitura das senhas armazenadas
+│
+├── .gitignore
+├── LICENSE
+├── README.md
+└── requirements.txt      # Arquivo com as dependências do projeto
 ```
 
 ## Melhorias Futuras
@@ -80,7 +136,7 @@ Algumas melhorias que podem ser adicionadas no futuro:
 
 - Interface gráfica (GUI) usando `tkinter` para facilitar o uso do gerador.
 - Opções avançadas de personalização, como repetição de caracteres.
-- Armazenamento seguro de senhas geradas.
+- Melhoria na segurança do armazenamento de senhas.
 
 ## Contribuições
 
@@ -89,3 +145,5 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou env
 ## Licença
 
 Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
