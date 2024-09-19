@@ -34,13 +34,15 @@ pip install -r requirements.txt
 ```
 /SAFEPASSGEN
     /dados
-        chave.key
-        senhas.txt
+        chave.key (Será criado na primeira utilização.)
+        senhas.txt (Será criado na primeira utilização.)
     /scripts
         gerador_senhas.py
         leitor_senhas.py
     .gitignore
     LICENSE
+    LICENSE_ES
+    LICENSE_PT
     README.md
     requirements.txt
 ```
