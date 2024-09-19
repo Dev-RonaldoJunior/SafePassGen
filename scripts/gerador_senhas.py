@@ -6,11 +6,11 @@ import tkinter as tk
 from tkinter import messagebox
 import shutil
 from datetime import datetime
+import subprocess
 
 # Defina o caminho dos arquivos
 chave_arquivo = '../SafePassGen/dados/chave.key'
 senhas_arquivo = '../SafePassGen/dados/senhas.txt'
-
 
 # Funções
 def gerar_senha(tamanho, usar_minuscula, usar_maiuscula, usar_numeros, usar_simbolos):
@@ -86,13 +86,6 @@ def gerar_e_exibir_senha():
         if os.path.getsize(senhas_arquivo) > 1024 * 1024:  # Limite de 1 MB
             arquivar_arquivo(senhas_arquivo)
 
-        # Verifica se a opção para exibir a senha não criptografada está marcada
-        if exibir_senha_var.get():
-            senha_exibida_text.delete(1.0, tk.END)
-            senha_exibida_text.insert(tk.END, senha)
-        else:
-            senha_exibida_text.delete(1.0, tk.END)
-
         # Atualiza o texto da senha criptografada
         senha_criptografada_text.delete(1.0, tk.END)
         senha_criptografada_text.insert(tk.END, senha_criptografada.decode())
@@ -100,17 +93,24 @@ def gerar_e_exibir_senha():
         # Salva a senha criptografada
         salvar_senha(senha_criptografada, senhas_arquivo)
 
-    except ValueError as e:
-        messagebox.showerror("Erro", str(e))
+        # Atualiza e mostra o número da senha
+        numero_senha = obter_numero_senha()
+        numero_senha_text.delete(1.0, tk.END)
+        numero_senha_text.insert(tk.END, f"Essa é a senha {numero_senha}")
 
-def copiar_para_area_de_transferencia():
-    senha = senha_exibida_text.get("1.0", tk.END).strip()
-    if senha:
-        root.clipboard_clear()
-        root.clipboard_append(senha)
-        root.update()
+    except ValueError as e:
+        messagebox.showerror("Erro", "Você deve digitar um valor entre 4 e 20")
+
+def obter_numero_senha():
+    """Obtém o número da próxima senha a ser criada, com base no número de senhas existentes."""
+    if os.path.exists(senhas_arquivo):
+        with open(senhas_arquivo, 'rb') as f:
+            linhas = f.readlines()
+        return len(linhas)
+    return 1
 
 def copiar_senha_criptografada():
+    """Copia a senha criptografada para a área de transferência."""
     senha_criptografada = senha_criptografada_text.get("1.0", tk.END).strip()
     if senha_criptografada:
         root.clipboard_clear()
@@ -118,7 +118,7 @@ def copiar_senha_criptografada():
         root.update()
 
 def confirmar_saida():
-    resposta = messagebox.askyesno("Confirmação", "Você tem certeza de que deseja fechar o programa?")
+    resposta = messagebox.askyesno("Sair", "Tem certeza de que deseja sair?")
     if resposta:
         root.destroy()
 
@@ -126,27 +126,33 @@ def limpar_tamanho_entry(event):
     if tamanho_entry.get() == "Digite um valor entre 4 e 20":
         tamanho_entry.delete(0, tk.END)
 
-def limpar_senha_exibida(event):
-    if senha_exibida_text.get("1.0", tk.END).strip() == "Sua senha aparecerá aqui":
-        senha_exibida_text.delete(1.0, tk.END)
-
 def limpar_senha_criptografada(event):
-    if senha_criptografada_text.get("1.0", tk.END).strip() == "Senha criptografada aparecerá aqui":
+    if senha_criptografada_text.get("1.0", tk.END).strip():
         senha_criptografada_text.delete(1.0, tk.END)
+
+def abrir_leitor():
+    """Abre o script do leitor de senhas."""
+    try:
+        subprocess.Popen(['python', '../SafePassGen/scripts/leitor_senhas.py'])
+    except Exception as e:
+        messagebox.showerror("Erro", f"Não foi possível abrir o leitor de senhas: {e}")
 
 # Configura a interface gráfica
 root = tk.Tk()
 root.title("Gerador de Senhas")
 
-# Define icone do programa
+# Define ícone do programa
 root.iconbitmap("icones/icon.ico")
 
 # Define a cor de fundo
 cor_fundo = "#4A90E2"
 
 # Configura o tamanho da janela e a cor de fundo
-root.geometry("360x400")
+root.geometry("360x420")
 root.configure(bg=cor_fundo)
+
+# Desativa a opção de maximizar
+root.resizable(False, False)
 
 # Cria a pasta dados se não existir
 if not os.path.exists(os.path.dirname(chave_arquivo)):
@@ -163,9 +169,9 @@ else:
 tamanho_label = tk.Label(root, text="Digite o tamanho da senha:", font=("Helvetica", 12), bg=cor_fundo, fg="white")
 tamanho_label.grid(row=0, column=0, padx=10, pady=5, sticky='w')
 
-tamanho_entry = tk.Entry(root, font=("Helvetica", 10))
+tamanho_entry = tk.Entry(root, font=("Helvetica", 8))
 tamanho_entry.grid(row=0, column=0, padx=210, pady=5, sticky='w')
-tamanho_entry.insert(0, " Um Valor entre 4 e 20")
+tamanho_entry.insert(0, "     Valor entre 4 e 20")
 tamanho_entry.bind("<FocusIn>", limpar_tamanho_entry)
 
 var_minuscula = tk.BooleanVar()
@@ -173,45 +179,47 @@ var_maiuscula = tk.BooleanVar()
 var_numeros = tk.BooleanVar()
 var_simbolos = tk.BooleanVar()
 
+# Row 1
 minuscula_check = tk.Checkbutton(root, text="Incluir letras minúsculas", variable=var_minuscula, font=("Helvetica", 12), bg=cor_fundo, fg="white", selectcolor="#0066CC")
 minuscula_check.grid(row=1, column=0, padx=10, pady=5, sticky='w')
 
+# Row 2
 maiuscula_check = tk.Checkbutton(root, text="Incluir letras maiúsculas", variable=var_maiuscula, font=("Helvetica", 12), bg=cor_fundo, fg="white", selectcolor="#0066CC")
 maiuscula_check.grid(row=2, column=0, padx=10, pady=5, sticky='w')
 
+# Row 3
 numeros_check = tk.Checkbutton(root, text="Incluir números: 1, 2, 3, etc...", variable=var_numeros, font=("Helvetica", 12), bg=cor_fundo, fg="white", selectcolor="#0066CC")
 numeros_check.grid(row=3, column=0, padx=10, pady=5, sticky='w')
 
+# Row 4
 simbolos_check = tk.Checkbutton(root, text="Incluir símbolos: !@#$%&/...", variable=var_simbolos, font=("Helvetica", 12), bg=cor_fundo, fg="white", selectcolor="#0066CC")
 simbolos_check.grid(row=4, column=0, padx=10, pady=5, sticky='w')
 
-exibir_senha_var = tk.BooleanVar()
-exibir_senha_check = tk.Checkbutton(root, text="Exibir senha não criptografada", variable=exibir_senha_var, font=("Helvetica", 12), bg=cor_fundo, fg="white", selectcolor="#0066CC")
-exibir_senha_check.grid(row=5, column=0, padx=10, pady=5, sticky='w')
-
+# Row 5
 gerar_senha_btn = tk.Button(root, text="Gerar Senha", command=gerar_e_exibir_senha, font=("Helvetica", 9), bg="white", fg="black")
-gerar_senha_btn.grid(row=10, column=0, padx=80, pady=10, sticky='w')
+gerar_senha_btn.grid(row=5, column=0, padx=80, pady=10, sticky='w')
 
-copiar_senha_btn = tk.Button(root, text="Copiar Senha", command=copiar_para_area_de_transferencia, font=("Helvetica", 10), bg="white", fg="black")
-copiar_senha_btn.grid(row=7, column=0, padx=261, pady=10, sticky='w')
+# Row 7
+numero_senha_text = tk.Text(root, height=1, width=34, font=("Helvetica", 10))
+numero_senha_text.grid(row=7, column=0, padx=10, pady=10, sticky='w')
 
-senha_exibida_text = tk.Text(root, height=3, width=34, font=("Helvetica", 10))
-senha_exibida_text.grid(row=7, column=0, padx=10, pady=5, sticky='w')
-senha_exibida_text.insert(tk.END, """
-            Senha não Criptografada""")
-senha_exibida_text.bind("<FocusIn>", limpar_senha_exibida)
-
-copiar_criptografada_btn = tk.Button(root, text="Copiar Senha", command=copiar_senha_criptografada, font=("Helvetica", 10), bg="white", fg="black")
-copiar_criptografada_btn.grid(row=9, column=0, padx=261, pady=10, sticky='w')
-
-senha_criptografada_text = tk.Text(root, height=3, width=34, font=("Helvetica", 10))
+# Row 9
+senha_criptografada_text = tk.Text(root, height=5, width=34, font=("Helvetica", 10))
 senha_criptografada_text.grid(row=9, column=0, padx=10, pady=5, sticky='w')
 senha_criptografada_text.insert(tk.END, """
+                
                 Senha Criptografada""")
 senha_criptografada_text.bind("<FocusIn>", limpar_senha_criptografada)
 
-sair_btn = tk.Button(root, text="Fechar", command=confirmar_saida, font=("Helvetica", 9), bg="white", fg="red")
+copiar_btn = tk.Button(root, text="Copiar Senha", command=copiar_senha_criptografada, font=("Helvetica", 10), bg="white", fg="black")
+copiar_btn.grid(row=9, column=0, padx=261, pady=10, sticky='w')
+
+# Row 10
+abrir_leitor_btn = tk.Button(root, text="Abrir Leitor de senhas", command=abrir_leitor, font=("Helvetica", 10), bg="white", fg="black")
+abrir_leitor_btn.grid(row=10, column=0, padx=10, pady=10, sticky='w')
+
+sair_btn = tk.Button(root, text="Sair", command=confirmar_saida, font=("Helvetica", 9), bg="red", fg="white")
 sair_btn.grid(row=10, column=0, padx=285, pady=10, sticky='w')
 
-# Inicia o programa
+
 root.mainloop()

@@ -1,2 +1,18 @@
-# Auto detect text files and perform LF normalization
+# Define o tratamento de final de linha para arquivos de texto
 * text=auto
+
+# Configura os arquivos Python como texto
+*.py text
+
+# Configura arquivos CSV como texto
+*.csv text
+
+# Configura arquivos Markdown e de licença como texto
+README.md text
+LICENSE text
+
+# Configura os arquivos de dados do diretório 'dados' como binários
+dados/* binary
+
+# Configura arquivos de ícone como binários
+*.ico binary
