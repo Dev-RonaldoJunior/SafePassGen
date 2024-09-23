@@ -95,13 +95,11 @@ R: Utilize um comprimento mínimo de senha e inclua uma combinação de letras m
 
 2. **Melhorias na Interface**: Adicionar temas personalizáveis e melhorar a experiência do usuário com opções de visualização mais intuitivas.
 
-3. **Geração de Senhas em Massa**: Adicionar funcionalidade para gerar múltiplas senhas de uma vez.
+3. **Integração com Gerenciadores de Senhas**: Integrar o gerador de senhas com gerenciadores de senhas populares para facilitar o uso das senhas geradas.
 
-4. **Integração com Gerenciadores de Senhas**: Integrar o gerador de senhas com gerenciadores de senhas populares para facilitar o uso das senhas geradas.
+4. **Sistema de Backup**: Implementar uma funcionalidade para backup automático das senhas criptografadas.
 
-5. **Sistema de Backup**: Implementar uma funcionalidade para backup automático das senhas criptografadas.
-
-6. **Validação de Senha**: Adicionar validação de força da senha para garantir que as senhas atendam a padrões de segurança recomendados.
+5. **Validação de Senha**: Adicionar validação de força da senha para garantir que as senhas atendam a padrões de segurança recomendados.
 
 ## Contribuições
 
